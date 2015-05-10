@@ -55,13 +55,13 @@ func Github() (cookies []*http.Cookie, auth_token string) {
 }
 
 
-func GithubLogin() (cookies []*http.Cookie, token string) {
+func GithubLogin() (cookies []*http.Cookie) {
     auth_cookies, auth_token := Github()
 
     // set post form data
     data := url.Values{}
     data.Set("utf8", "✓")
-    data.Set("login", "kaleo211")
+    data.Set("login", login)
     data.Set("password", password)
     data.Set("authenticity_token", auth_token)
 
@@ -94,27 +94,6 @@ func GithubLogin() (cookies []*http.Cookie, token string) {
     }
 
     cookies = resp.Cookies()
-
-    z := html.NewTokenizer(resp.Body)
-    for {
-        tt := z.Next()
-        if tt==html.ErrorToken {
-            return
-        }
-        bytes, has_attr := z.TagName()
-
-        if "meta"==string(bytes) && has_attr {
-            for {
-                k, v, more_attr := z.TagAttr()
-                if string(k)=="content" && strings.HasSuffix(string(v), "==") {
-                    token = string(v)
-                }
-                if !more_attr {
-                    break
-                }
-            }
-        }
-    }
 
     return
 }
@@ -159,7 +138,9 @@ func GetFormToken(origin_cookies []*http.Cookie) (cookies []*http.Cookie, token 
 }
 
 
-func UpdateDescription(description string, origin_cookies []*http.Cookie, token string) {
+func UpdateDescription(description string) {
+
+    origin_cookies := GithubLogin()
 
     cookies, token := GetFormToken(origin_cookies)
 

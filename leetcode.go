@@ -34,7 +34,7 @@ func LeetcodeLogin() (cookies []*http.Cookie) {
 
     // set post form data
     data := url.Values{}
-    data.Set("login", "kaleo211")
+    data.Set("login", login)
     data.Set("password", password)
     origin_cookie := Leetcode()
     data.Set("csrfmiddlewaretoken", origin_cookie.Value)
