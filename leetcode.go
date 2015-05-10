@@ -14,14 +14,6 @@ func Leetcode() (cookie *http.Cookie) {
     leetcode_url := "https://leetcode.com/"
 
     req, _ := http.NewRequest("GET", leetcode_url, nil)
-    req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
-    // req.Header.Set("Accept-Encoding", "gzip, deflate, sdch")
-    req.Header.Set("Accept-Language", "en-US,en;q=0.8")
-    req.Header.Set("Connection", "keep-alive")
-    req.Header.Set("DNT", "1")
-    req.Header.Set("Host", "leetcode.com")
-    req.Header.Set("Referer", "https://leetcode.com/accounts/login/")
-    req.Header.Set("User-Agent", user_agent)
 
     resp, _ := client.Do(req)
     cookie = resp.Cookies()[0]
@@ -41,18 +33,9 @@ func LeetcodeLogin() (cookies []*http.Cookie) {
 
     leetcode_login := "https://leetcode.com/accounts/login/"
     req, _ := http.NewRequest("POST", leetcode_login, bytes.NewBufferString(data.Encode()))
-    req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
-    req.Header.Set("Accept-Encoding", "gzip, deflate")
-    req.Header.Set("Accept-Language", "en-US,en;q=0.8")
-    req.Header.Set("Cache-Control", "max-age=0")
-    req.Header.Set("Connection", "keep-alive")
-    req.Header.Set("Content-Length", "92")
-    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-    req.Header.Set("DNT", "1")
-    req.Header.Set("Host", "leetcode.com")
-    req.Header.Set("Origin", "https://leetcode.com")
+
     req.Header.Set("Referer", "https://leetcode.com/accounts/login/")
-    req.Header.Set("User-Agent", user_agent)
+    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
     req.Header.Set("Cookie", origin_cookie.Name+"="+origin_cookie.Value)
 
     resp, _ := transport.RoundTrip(req)
@@ -72,16 +55,6 @@ func AlgorithmPage() (bytes []byte) {
     leetcode_algorithm := "https://leetcode.com/problemset/algorithms/"
     req, _ := http.NewRequest("GET", leetcode_algorithm, nil)
 
-    req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
-    // Remove this header from req, cause GO COULD NOT decode one of them!!!!
-    // req.Header.Set("Accept-Encoding", "gzip, deflate, sdch")
-    req.Header.Set("Accept-Language", "en-US,en;q=0.8")
-    req.Header.Set("Connection", "keep-alive")
-    req.Header.Set("DNT", "1")
-    req.Header.Set("Host", "leetcode.com")
-    req.Header.Set("Referer", "https://leetcode.com/accounts/login/")
-    req.Header.Set("User-Agent", user_agent)
-
     cookies := LeetcodeLogin()
     for _, c := range cookies {
         req.AddCookie(c)
@@ -100,8 +73,8 @@ func Progress() (solved, total int) {
 
     reader := bytes.NewReader(AlgorithmPage())
 
+    // low level traverse
     z := html.NewTokenizer(reader)
-
     for {
         tt := z.Next()
         if tt==html.ErrorToken {

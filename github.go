@@ -14,14 +14,6 @@ func Github() (cookies []*http.Cookie, auth_token string) {
     github := "https://github.com/login"
 
     req, _ := http.NewRequest("GET", github, nil)
-    req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
-    // req.Header.Set("Accept-Encoding", "gzip, deflate, sdch")
-    req.Header.Set("Accept-Language", "en-US,en;q=0.8")
-    req.Header.Set("Connection", "keep-alive")
-    req.Header.Set("DNT", "1")
-    req.Header.Set("Host", "github.com")
-    req.Header.Set("Referer", "https://github.com/")
-    req.Header.Set("User-Agent", user_agent)
 
     resp, err := client.Do(req)
     if err!=nil {
@@ -67,18 +59,6 @@ func GithubLogin() (cookies []*http.Cookie) {
 
     github_login := "https://github.com/session"
     req, _ := http.NewRequest("POST", github_login, bytes.NewBufferString(data.Encode()))
-    req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
-    req.Header.Set("Accept-Encoding", "gzip, deflate")
-    req.Header.Set("Accept-Language", "en-US,en;q=0.8")
-    req.Header.Set("Cache-Control", "max-age=0")
-    req.Header.Set("Connection", "keep-alive")
-    // req.Header.Set("Content-Length", "174")
-    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-    req.Header.Set("DNT", "1")
-    req.Header.Set("Host", "github.com")
-    req.Header.Set("Origin", "https://github.com")
-    req.Header.Set("Referer", "https://github.com/")
-    req.Header.Set("User-Agent", user_agent)
 
     for _, c := range auth_cookies {
         req.AddCookie(c)
@@ -99,7 +79,7 @@ func GithubLogin() (cookies []*http.Cookie) {
 }
 
 
-// I found every action has his own token in github
+// every action has his own token in github
 func GetFormToken(origin_cookies []*http.Cookie) (cookies []*http.Cookie, token string) {
     github := "https://github.com/kaleo211/Leetcode"
     req, _ := http.NewRequest("GET", github, nil)
@@ -155,29 +135,11 @@ func UpdateDescription(description string) {
     github_project := "https://github.com/kaleo211/Leetcode/settings/update_meta"
     req, _ := http.NewRequest("POST", github_project, bytes.NewBufferString(data.Encode()))
 
-    req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
-    req.Header.Set("Accept-Encoding", "gzip, deflate")
-    req.Header.Set("Accept-Language", "en-US,en;q=0.8")
-    req.Header.Set("Cache-Control", "max-age=0")
-    req.Header.Set("Connection", "keep-alive")
-    // req.Header.Set("Content-Length", "240")
-    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-    req.Header.Set("DNT", "1")
-    req.Header.Set("Host", "github.com")
-    req.Header.Set("Origin", "https://github.com")
-    req.Header.Set("Referer", "https://github.com/kaleo211/Leetcode")
-    req.Header.Set("User-Agent", user_agent)
-
-    coo := "_gat=1; logged_in=yes; dotcom_user=kaleo211; _gh_sess="
-    kie := "; tz=America/New_York; user_session="
+    cookie := "_gat=1; logged_in=yes; dotcom_user=kaleo211"
     for _, c := range cookies {
-        if c.Name=="user_session" {
-            kie += c.Value
-        } else if c.Name=="_gh_sess" {
-            coo += c.Value
-        }
+        cookie += "; "+c.Name+"="+c.Value
     }
-    req.Header.Set("Cookie", coo+kie)
+    req.Header.Set("Cookie", cookie)
 
     resp, _ := transport.RoundTrip(req)
     defer resp.Body.Close()

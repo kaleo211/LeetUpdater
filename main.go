@@ -9,7 +9,6 @@ import (
     "golang.org/x/crypto/ssh/terminal"
 )
 
-const user_agent string = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36"
 const sleeping = time.Duration(6)*time.Hour
 const login = "kaleo211"
 const description = "Solutions to LeetCode %d/%d  - update automatically"
@@ -31,7 +30,7 @@ func Update() {
     descrip := fmt.Sprintf(description, solved, total)
     logger.Println(descrip)
 
-    UpdateDescription(description)
+    UpdateDescription(descrip)
     logger.Println("------------------E-N-D----------------------")
 }
 
@@ -52,6 +51,7 @@ func main() {
         }
     }()
 
+    // visit 127.0.0.1:8080 could invoke update
     http.HandleFunc("/", handler)
     http.ListenAndServe(":8080", nil)
 }
