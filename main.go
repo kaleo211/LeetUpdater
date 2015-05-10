@@ -5,9 +5,8 @@ import (
     "net/http"
     "log"
     "os"
-    "bufio"
-    "strings"
     "time"
+    "golang.org/x/crypto/ssh/terminal"
 )
 
 const user_agent string = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36"
@@ -24,16 +23,6 @@ var password string
 
 const sleeping = time.Duration(6)*time.Hour
 
-
-func GetPassword() (pwd string) {
-    // read password from command line
-    reader := bufio.NewReader(os.Stdin)
-    fmt.Print("password: ")
-    stdin, _ := reader.ReadString('\n')
-    pwd = strings.Trim(stdin, "\r\n"+string(0))
-
-    return
-}
 
 func Update() {
     solved, total := Progress()
@@ -54,7 +43,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-    password = GetPassword()
+    fmt.Print("password ")
+    raw, _ := terminal.ReadPassword(1)
+    password = string(raw)
 
     go func() {
         for {
