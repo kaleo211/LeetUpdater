@@ -1,0 +1,7 @@
+---
+applications:
+ - name: LeetUpdater
+   memory: 512M
+   instances: 1
+   path: ../../../../bin/LeetUpdater
+   
